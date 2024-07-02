@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
+import { useParams } from "react-router";
 
 const AddContact = () => {
 
@@ -10,6 +11,8 @@ const AddContact = () => {
     const [email, setEmail] = useState("")
     const [address, setAddress] = useState("")
 
+    const { contact_id } = useParams()
+
     const handleSubmit = () => {
         const contact = {
             name: name,
@@ -17,14 +20,35 @@ const AddContact = () => {
             email: email,
             address: address,
         }
-        actions.createContact(contact)
+        if (contact_id !== undefined) {
+            actions.updateContact(contact, contact_id)
+        } else {
+            actions.createContact(contact)
+        }
+        setName("")
+        setPhone("")
+        setEmail("")
+        setAddress("")
     }
 
+    useEffect(() => {
+        if (Array.isArray(store.contacts)) {
+            const contacts = [...store.contacts]
+            if (contact_id !== undefined) {
+                const contact = contacts.find((item) => item.id === parseInt(contact_id))
+                setName(contact?.name)
+                setEmail(contact?.email)
+                setAddress(contact?.address)
+                setPhone(contact?.phone)
+            }
+        }
+    }, [store.contacts, contact_id])
+
     return (
-        <div className="container">
+        <div className="container text-white">
             <div className="row">
                 <div className="col-m-12">
-                    <h3>Add New Contact</h3>
+                    <h3>{contact_id ? "Edit" : "Add"} New Contact</h3>
                 </div>
                 <div className="col-m-12">
                     <div className="form-group mb-3">
@@ -33,7 +57,7 @@ const AddContact = () => {
                     </div>
                     <div className="form-group mb-3">
                         <label htmlFor="phone" className="form-label">Phone:</label>
-                        <input type="number" className="form-control" placeholder="Insert your phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                        <input type="text" className="form-control" placeholder="Insert your phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
                     </div>
                     <div className="form-group mb-3">
                         <label htmlFor="name" className="form-label">Email:</label>

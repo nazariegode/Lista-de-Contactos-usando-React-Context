@@ -20,6 +20,7 @@ const Layout = () => {
 					<Navbar />
 					<Routes>
 						<Route path="/addContact" element={<AddContact />} />
+						<Route path="/editContact/:contact_id" element={<AddContact />} />
 						<Route path="/" element={<Home />} />
 						<Route path="/single/:theid" element={<Single />} />
 						<Route path="*" element={<h1>Not found!</h1>} />
